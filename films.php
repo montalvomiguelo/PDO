@@ -1,7 +1,14 @@
 <?php
 
+/**
+  * Filter Input, Escape Output, nunca debemos de confiar en lo que el
+  * usuario introduce a nuestras búsqueds. Pueden hacer SQL Injection
+  * en la url y obtener información sensible y hacernos daño.
+ */
+
 if (isset($_GET['id'])) {
-  $id = $_GET['id'];
+  // Asegurar que estamos obteniendo un valor numérico
+  $id = intval( $_GET['id'] );
 }
 
 require_once('database.php');
@@ -11,9 +18,27 @@ require_once('database.php');
   * que interactuamos con nuestra base de datos.
  */
 try {
-  // PDO tiene un método para hacer consultas
-  // Retorna un objeto de tipo PDOStatement
-  $results = $pdo->query("SELECT * FROM film WHERE film_id = $id");
+  /**
+   * Preparamos nuestra consulta con el método prepare de PDO, solo la
+   * prepara para despues ser ejecutada por excecute()
+   * Vamos a utilizar un placeholder para poder despues procesar el $id
+   * de la consulta
+   */
+  $results = $pdo->prepare("SELECT * FROM film WHERE film_id = ?");
+
+  /**
+   * Como estamos utilizando un placeholder, tenemos que obtener su
+   * valor con el metodo bindParam, el primer argumento es el número
+   * de placeholder y no es notación de arreglo, en segundo lugar
+   * recibe el valor que va ser sustituido.
+   */
+  $results->bindParam(1, $id);
+
+  /**
+   * Por último ejecutamos la consulta. Esta si es una consulta segura
+   * para prevenir SQL injection
+   */
+  $results->execute();
 } catch (Exception $e) {
   echo $e->getMessage();
   die();
