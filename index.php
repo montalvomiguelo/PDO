@@ -15,8 +15,11 @@ try {
   die();
 }
 
-// Este objeto tiene un método fetchAll para traer todas las films
-// Puede recibir varios argumentos, en este caso me traé un arreglo
+/**
+ * Este objeto tiene un método fetchAll para traer todas las films
+ * PDO:FETCH::ASSOC hace que retorne un arreglo con llaves asociativas
+ * PDO:FETCH_NUM hace que solamente tiene enteros para las llaves
+ */
 $films = $results->fetchAll(PDO::FETCH_ASSOC);
 //var_dump($films);
 ?>
