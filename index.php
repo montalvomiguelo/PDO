@@ -1,46 +1,51 @@
 <?php
-/**
-* PDO php, data, object es una manera que ofrece php para
-* interactuar con bases de datos de una manera sencilla.
-*
-* Necesitamos el controlador adecuado para nuestra base de datos en
-* este caso mysql
- */
 
-// Mostrar errores (remove befor flight)
-ini_set('display_errors', true);
-error_reporting(E_ALL);
+require_once('database.php');
 
 /**
-  * Manejo de Errores, es muy importante manejar errores en nuestra aplicación
-  * para hacer eso hacemos un try catch block
-  * try / catch es el constructor de php que utilizamos para el manejo de errores.
+  * Es mejor práctica usar el constructor try / catch cada vez
+  * que interactuamos con nuestra base de datos.
  */
-try { // Si la creación de mi PDO Object es exitosa entonces esto:
-  // Instancia del objeto PDO.
-  $pdo = new PDO(
-    'mysql:host=localhost;dbname=sakila',
-    'root',
-    'root'
-  );
-  var_dump($pdo);
-
-  /**
-   * PDO object tiene tambíen varios métodos y propiedades, en este
-   * usaremos una de ellas para establecer que siempre nos motrará
-   * errores e información de lo que pase en nuestra aplicación
-   * con el manejo de este objecto.
-   */
-
-  $pdo->setAttribute('PDO::ATTR_ERRMODE', 'PDO::ERRMODE_EXCEPTION');
-
-} catch(Exception $e) { // Si hubo algun error entonces esto:
-  /**
-    * La clase Exception tiene varios métodos y propiedades que nos dan
-    * más información de lo que pasó... por que sucedio el error
-   */
-  //var_dump($e);
+try {
+  // PDO tiene un método para hacer consultas
+  // Retorna un objeto de tipo PDOStatement
+  $results = $pdo->query('SELECT * FROM film');
+} catch (Exception $e) {
   echo $e->getMessage();
   die();
 }
 
+// Este objeto tiene un método fetchAll para traer todas las films
+// Puede recibir varios argumentos, en este caso me traé un arreglo
+$films = $results->fetchAll(PDO::FETCH_ASSOC);
+//var_dump($films);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Films</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+      <?php foreach ($films as $film) : ?>
+        <tr>
+          <td><?php echo $film['film_id']; ?></td>
+          <td><a href="films.php?id=<?php echo $film['film_id']; ?>"><?php echo $film['title']; ?></a></td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
