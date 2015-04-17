@@ -47,7 +47,7 @@ try {
 // Este objeto tiene un método fetch para traer un solo resultado
 // Puede recibir varios argumentos, en este caso me traé un arreglo
 $film = $results->fetch(PDO::FETCH_ASSOC);
-//var_dump($film);
+// var_dump($film);
 ?>
 
 <!DOCTYPE html>
@@ -59,6 +59,7 @@ $film = $results->fetch(PDO::FETCH_ASSOC);
 </head>
 <body>
   <div class="container">
+    <?php if ($film) : ?>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -77,6 +78,9 @@ $film = $results->fetch(PDO::FETCH_ASSOC);
         </tr>
       </tbody>
     </table>
+    <?php else: ?>
+    <p class="text-danger">Nothing found with the provided id</p>
+    <?php endif; ?>
   </div>
 </body>
 </html>
